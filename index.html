@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clash of Clans — Profile Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET & BASE ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold-bright:  #FFD94A;
+      --gold-mid:     #C8961E;
+      --gold-dim:     #7A5910;
+      --glass-bg:     rgba(8, 6, 20, 0.72);
+      --glass-border: rgba(255, 210, 80, 0.18);
+      --glass-hover:  rgba(255, 210, 80, 0.08);
+      --text-primary: #F5E8C0;
+      --text-muted:   #9A8060;
+      --active-glow:  0 0 0 2px #FFD94A, 0 0 22px 4px rgba(255,200,40,0.45);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        url('https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/006a4e457461a9c30bea946b7839483f.jpg')
+        center center / cover no-repeat fixed;
+      z-index: -2;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(4, 2, 12, 0.82) 0%,
+        rgba(10, 6, 28, 0.70) 50%,
+        rgba(4, 2, 12, 0.85) 100%
+      );
+      z-index: -1;
+    }
+
+    /* ── LAYOUT WRAPPER ────────────────────────────────────── */
+    .dashboard {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 24px 32px;
+      gap: 20px;
+    }
+
+    /* ── HEADER ────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .crest-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 8px rgba(255,210,40,0.6));
+    }
+    .header-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: clamp(1.1rem, 2.8vw, 1.55rem);
+      letter-spacing: 0.06em;
+      color: var(--gold-bright);
+      text-shadow: 0 0 18px rgba(255,210,60,0.45);
+      line-height: 1.1;
+    }
+    .header-title span {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: 6px 14px 6px 10px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4DFF8A;
+      box-shadow: 0 0 8px rgba(77,255,138,0.8);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.75); }
+    }
+    .badge-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: #4DFF8A;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN GRID ─────────────────────────────────────────── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+      align-items: start;
+    }
+
+    /* ── GLASS CARD BASE ───────────────────────────────────── */
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* ── SHOWCASE PANEL (left) ─────────────────────────────── */
+    .showcase {
+      padding: 32px 28px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 320px; height: 320px;
+      background: radial-gradient(ellipse at center,
+        rgba(255, 200, 40, 0.10) 0%,
+        transparent 70%);
+      pointer-events: none;
+    }
+
+    .showcase-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold-mid);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 4px 14px;
+    }
+
+    /* Avatar ring */
+    .avatar-ring-wrap {
+      position: relative;
+      width: 188px;
+      height: 188px;
+      flex-shrink: 0;
+    }
+    .avatar-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #FFD94A 0%,
+        #C8961E 25%,
+        #FFD94A 50%,
+        #7A5910 75%,
+        #FFD94A 100%
+      );
+      animation: spin-ring 8s linear infinite;
+      filter: blur(1px);
+    }
+    @keyframes spin-ring {
+      to { transform: rotate(360deg); }
+    }
+    .avatar-ring-inner {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+    }
+    .showcase-avatar {
+      position: relative;
+      z-index: 1;
+      width: 188px;
+      height: 188px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .showcase-avatar.fading {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+
+    /* Corner rune decorations */
+    .rune {
+      position: absolute;
+      font-size: 1.3rem;
+      opacity: 0.18;
+      color: var(--gold-bright);
+      pointer-events: none;
+      font-family: 'Cinzel', serif;
+    }
+    .rune-tl { top: 16px; left: 20px; }
+    .rune-tr { top: 16px; right: 20px; }
+    .rune-bl { bottom: 16px; left: 20px; }
+    .rune-br { bottom: 16px; right: 20px; }
+
+    .showcase-name {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      letter-spacing: 0.05em;
+      color: var(--gold-bright);
+      text-shadow: 0 0 24px rgba(255,210,60,0.5);
+      text-align: center;
+      transition: opacity 0.35s ease;
+      line-height: 1.2;
+      min-height: 2.2em;
+      display: flex;
+      align-items: center;
+    }
+    .showcase-name.fading { opacity: 0; }
+
+    .divider {
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    }
+
+    .showcase-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+    .stat-block {
+      background: rgba(255,210,40,0.05);
+      border: 1px solid rgba(255,210,40,0.12);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--gold-bright);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .showcase-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #C8961E, #FFD94A);
+      color: #1a0e00;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(255,180,0,0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .showcase-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(255,180,0,0.55);
+    }
+    .showcase-cta:active { transform: translateY(0); }
+
+    /* ── ROSTER PANEL (right) ──────────────────────────────── */
+    .roster-panel {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .roster-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .roster-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .roster-count {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    /* ── PROFILE CARD ──────────────────────────────────────── */
+    .profile-card {
+      border-radius: 14px;
+      border: 1px solid rgba(255,210,80,0.14);
+      background: rgba(255,255,255,0.04);
+      overflow: hidden;
+      cursor: pointer;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+      position: relative;
+    }
+    .profile-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 28px rgba(255,180,0,0.22);
+      border-color: rgba(255,210,80,0.38);
+      background: var(--glass-hover);
+    }
+    .profile-card.active {
+      box-shadow: var(--active-glow);
+      border-color: var(--gold-bright);
+      background: rgba(255,200,40,0.10);
+    }
+    .profile-card.active::after {
+      content: '✦';
+      position: absolute;
+      top: 5px; right: 6px;
+      font-size: 0.65rem;
+      color: var(--gold-bright);
+      text-shadow: 0 0 6px #FFD94A;
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+    }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .profile-card:hover .card-img { transform: scale(1.08); }
+
+    .card-name {
+      padding: 6px 6px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-top: 1px solid rgba(255,210,80,0.08);
+      line-height: 1.2;
+    }
+    .profile-card.active .card-name { color: var(--gold-bright); }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 820px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      .roster-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    @media (max-width: 520px) {
+      .dashboard { padding: 14px 14px 24px; }
+      .roster-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .showcase { padding: 24px 18px 28px; }
+      .header-badge { display: none; }
+    }
+    @media (max-width: 360px) {
+      .roster-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── REDUCED MOTION ────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .avatar-ring, .badge-dot { animation: none; }
+      .showcase-avatar, .showcase-name { transition: none; }
+    }
+
+    /* ── SCROLLBAR ─────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold-dim);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-logo">
+      <!-- SVG Shield Crest -->
+      <svg class="crest-icon" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 4L76 18V46C76 64 60 78 40 86C20 78 4 64 4 46V18L40 4Z" fill="url(#shieldGrad)" stroke="#C8961E" stroke-width="2"/>
+        <path d="M40 14L66 25V46C66 60 54 72 40 78C26 72 14 60 14 46V25L40 14Z" fill="rgba(0,0,0,0.35)" stroke="rgba(255,210,80,0.35)" stroke-width="1"/>
+        <text x="40" y="54" text-anchor="middle" font-family="serif" font-size="28" font-weight="bold" fill="#FFD94A" opacity="0.9">⚔</text>
+        <defs>
+          <linearGradient id="shieldGrad" x1="4" y1="4" x2="76" y2="86" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#C8961E"/>
+            <stop offset="100%" stop-color="#7A5910"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="header-title">
+        Clash of Clans
+        <span>Profile Command Center</span>
+      </div>
+    </div>
+    <div class="header-badge">
+      <span class="badge-dot"></span>
+      <span class="badge-text">12 Profiles</span>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <main class="main-grid">
+
+    <!-- LEFT: SHOWCASE -->
+    <div class="glass-card showcase">
+      <span class="rune rune-tl">⚔</span>
+      <span class="rune rune-tr">🛡</span>
+      <span class="rune rune-bl">🏰</span>
+      <span class="rune rune-br">💎</span>
+
+      <span class="showcase-eyebrow">Active Profile</span>
+
+      <div class="avatar-ring-wrap">
+        <div class="avatar-ring"></div>
+        <div class="avatar-ring-inner"></div>
+        <img
+          id="showcase-img"
+          class="showcase-avatar"
+          src="https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/795afa2f2ce775c8c291932d042f78e5.jpg"
+          alt="Active Profile Avatar"
+        />
+      </div>
+
+      <h2 id="showcase-name" class="showcase-name">Iftar Party</h2>
+
+      <div class="divider"></div>
+
+      <div class="showcase-stats">
+        <div class="stat-block">
+          <span class="stat-value">TH17</span>
+          <span class="stat-label">Town Hall</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-value">★★★</span>
+          <span class="stat-label">War Stars</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-value">Legend</span>
+          <span class="stat-label">League</span>
+        </div>
+      </div>
+
+      <button class="showcase-cta">
+        ⚔ Deploy Hero
+      </button>
+    </div>
+
+    <!-- RIGHT: ROSTER -->
+    <div class="glass-card roster-panel">
+      <div class="roster-header">
+        <span class="roster-title">Profile Roster</span>
+        <span class="roster-count">12 TOTAL</span>
+      </div>
+
+      <div class="roster-grid" id="roster-grid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    Clash of Clans · Profile Dashboard · Select a card to activate
+  </footer>
+
+</div>
+
+<script>
+  const PROFILES = [
+    { name: "Iftar Party",     img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/795afa2f2ce775c8c291932d042f78e5.jpg" },
+    { name: "Clash Of Clans", img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/e791418b78bc1d68da2df14fd9b8e22a.jpg" },
+    { name: "Super Hammer 🔨", img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/345e64cb03b6a865f2227df84e27df9b.jpg" },
+    { name: "Clans Of War",   img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/3dc214d7d5bde9ecfe0a63192d6fbcf6.jpg" },
+    { name: "Clash",          img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/3f6ee139fdad7db716433385f95dba79.jpg" },
+    { name: "Archer Queen 👑",img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/63875f3529514bd0ca80eb093aca1713.jpg" },
+    { name: "Op ID",          img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/0f2c0cc3c94d135b658991221188ac90.jpg" },
+    { name: "Clash Hero",     img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/0e438828b961bef793ed0badf31f5c9a.jpg" },
+    { name: "Builder Hurt",   img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/684c225faa789c1b0a9439d30b872d28.jpg" },
+    { name: "Electro Dragon", img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/957d1082162804280b40c43375e00fd4.jpg" },
+    { name: "Dragon Duke",    img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/3db2c75f081a75583de4059cc6dc95f4.jpg" },
+    { name: "Minion Prince",  img: "https://raw.githubusercontent.com/mdimrankhanalpha/Clash-of-clans-001/main/3106e053f55cef623a44785514245700.jpg" },
+  ];
+
+  const showcaseImg  = document.getElementById('showcase-img');
+  const showcaseName = document.getElementById('showcase-name');
+  const rosterGrid   = document.getElementById('roster-grid');
+
+  let activeIndex = 0;
+  let transitioning = false;
+
+  function activateProfile(index) {
+    if (transitioning || index === activeIndex) return;
+    transitioning = true;
+
+    /* fade out */
+    showcaseImg.classList.add('fading');
+    showcaseName.classList.add('fading');
+
+    setTimeout(() => {
+      const p = PROFILES[index];
+      showcaseImg.src  = p.img;
+      showcaseName.textContent = p.name;
+
+      /* update active card */
+      document.querySelectorAll('.profile-card').forEach((c, i) => {
+        c.classList.toggle('active', i === index);
+      });
+      activeIndex = index;
+
+      /* fade in */
+      showcaseImg.classList.remove('fading');
+      showcaseName.classList.remove('fading');
+      transitioning = false;
+    }, 320);
+  }
+
+  /* Build roster cards */
+  PROFILES.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'profile-card' + (i === 0 ? ' active' : '');
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', 'Activate ' + p.name);
+
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy" />
+      </div>
+      <div class="card-name">${p.name}</div>
+    `;
+
+    card.addEventListener('click', () => activateProfile(i));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateProfile(i); }
+    });
+
+    rosterGrid.appendChild(card);
+  });
+</script>
+</body>
+</html>
